@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/69a55823e5.js" crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@400;700&family=Roboto+Mono&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+    <link rel="shortcut icon" href="#">
+</head>
+
+<body>
+    <header>
+        <a href="#"><img src="https://project-converseaac.com/wp-content/uploads/2022/02/logo.png" alt="Logo"></a>
+        <nav>
+            <ul>
+                <li><a href="#">HOME</a></li>
+                <li><a href="#QuickTalker">QUICKTALKER</a></li>
+                <li><a href="#Trainer">TRAINER</a></li>
+                <li><a href="#ChatBot">CHATBOT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="QuickTalker">
+        <h1>QuickTalker</h1>
+        <div class="chatgpt">
+            <form method="post" action="{{ url_for('prompt') }}" id="textInput">
+                <input class="bar" type="text" name="prompt" id="prompt" placeholder="Enter ChatGPT Request"
+                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter ChatGPT Request'">
+                <button type="submit" class="submit"><span>Submit </span></button>
+            </form>
+        </div>
+
+        <div class="output-box">
+            <textarea id="promptOutput" placeholder="Response" readonly></textarea>
+            <button id="tts1"><i class="fa-solid fa-volume-high fa-xl"></i></button>
+        </div>
+
+        <div class="output-box">
+            <textarea id="promptOutput2" placeholder="Alt Response" readonly></textarea>
+            <button id="tts2"><i class="fa-solid fa-volume-high fa-xl"></i></button>
+        </div>
+
+    </section>
+
+    <section id="Trainer">
+        <h1>Trainer</h1>
+        <div class="trainer">
+
+            <div class="generate question">
+                <textarea id="trainerPrompt" class="bar" placeholder="Generate a prompt" rows="1" readonly></textarea>
+                <button class="submit" id="trainerPromptOut"><span>Generate </span></button>
+            </div>
+
+            <div class="trainer options">
+                <button id="I">I</button>
+                <button id="agree">agree</button>
+                <button id="disagree">disagree</button>
+                <button id="score"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+            <p id="scoreOut"></p>
+        </div>
+    </section>
+
+    <section id="ChatBot">
+        <h1>ChatBot</h1>
+
+        <div id="chat-interface">
+
+            <div id="chat-history">
+                <!-- messages will be added here dynamically -->
+            </div>
+            <form id="chat-form">
+                <input type="text" id="chat-input" placeholder="Type your message...">
+                <!-- button changes to send while typing -->
+                <button type="button" id="chat-record"><i class="fa-xl fa-solid fa-microphone"></i></button>
+            </form>
+        </div>
+    </section>
+
+</body>
+
+<script src="{{ url_for('static', filename='js/script.js') }}" async></script>
+
+</html>

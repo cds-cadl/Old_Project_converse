@@ -1,0 +1,7 @@
+openai
+flask
+pyaudio
+wave
+pydub
+gtts
+flask_cors
