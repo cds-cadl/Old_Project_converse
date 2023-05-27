@@ -4,6 +4,8 @@
 * Type or record prompt to the Chatbot.
 * To record, press the ***'r'*** key twice. To stop recording press the ***'s'*** key twice.
 * To generate AI response, press ***'Enter'*** key.
+* To play the first AI response as audio, press the ***'1'*** key.
+* To play the second AI response as audio, press the ***'2'*** key.
 * To clear the screen, press the ***'c'*** key twice. 
 
 ## Trainer Usage
