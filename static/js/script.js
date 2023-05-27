@@ -8,7 +8,7 @@ QUICKTALKER
 
 $(document).ready(function () {
   $(document).keydown(function (event) {
-    event.preventDefault();
+    
     var input_text = $('#prompt').val();
     if (event.key === 'Enter' && input_text.length !== 0) {
       $.post('/prompt', { input_text: input_text }, function (data) {
@@ -23,6 +23,7 @@ $(document).ready(function () {
         var contentHeight = textarea[0].scrollHeight - parseFloat(textarea.css('padding-top')) - parseFloat(textarea.css('padding-bottom'));
         textarea.height(contentHeight);
       }, 'json');
+      event.preventDefault();
     }
   });
 });
@@ -89,10 +90,13 @@ window.onload = function () {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'r' && event.key === 'r') {
       startRecording();
+      event.preventDefault();
     } else if (event.key === 's' && event.key === 's') {
       stopRecording();
+      event.preventDefault();
     } else if (event.key === 'c' && event.key === 'c') {
       clearInputs();
+      event.preventDefault();
     }
   });
 }
@@ -117,13 +121,13 @@ $(document).ready(function () {
 $(document).ready(function () {
   $(document).keydown(function (event) {
     if (event.key === '2') {
-      event.preventDefault();
       var inputText = $('#promptOutput2').val();
       if (inputText) {
         $.post('/text-to-speech', { input_text: inputText }, function (data) {
           var audio = new Audio('data:audio/mp3;base64,' + data.audio_content);
           audio.play();
         }, 'json');
+        event.preventDefault();
       }
     }
   });
