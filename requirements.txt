@@ -5,3 +5,4 @@ wave
 pydub
 gtts
 flask_cors
+openpyxl
