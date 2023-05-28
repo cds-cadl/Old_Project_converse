@@ -26,6 +26,11 @@
   background-color: #666666;
 }
 
+::selection {
+  background-color: #57657c;
+}
+
+
 html {
   scroll-behavior: smooth;
 }

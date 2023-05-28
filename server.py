@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import main
 import json
 import base64
+import os
 
 app = Flask(__name__)
 app.debug = True
@@ -34,7 +35,7 @@ def prompt():
 def save_audio():
 
     audio_file = request.files['audio']
-    audio_file.save('static/audio/request.wav')
+    audio_file.save('request.wav')
 
     return 'Audio saved successfully!', 200
 
@@ -44,7 +45,8 @@ def transcribe_audio():
 
     data = json.loads(request.data)
     filename = data['filename']
-    transcription = main.transcribe('static/audio/' + filename)
+    transcription = main.transcribe(filename)
+    os.remove(filename)
 
     return transcription
 
