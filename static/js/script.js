@@ -4,29 +4,17 @@ QUICKTALKER
 ***********
 */
 
-// AI Generated Response
+var startTime;
+var action;
 
+// Capture the typing start time
 $(document).ready(function () {
-  $(document).keydown(function (event) {
-    
-    var input_text = $('#prompt').val();
-    if (event.key === 'Enter' && input_text.length !== 0) {
-      $.post('/prompt', { input_text: input_text }, function (data) {
-        $('#promptOutput').val(data.resp);
-        $('#promptOutput2').val(data.alt_resp);
-
-        var textarea = $('#promptOutput');
-        var contentHeight = textarea[0].scrollHeight - parseFloat(textarea.css('padding-top')) - parseFloat(textarea.css('padding-bottom'));
-        textarea.height(contentHeight);
-
-        var textarea = $('#promptOutput2');
-        var contentHeight = textarea[0].scrollHeight - parseFloat(textarea.css('padding-top')) - parseFloat(textarea.css('padding-bottom'));
-        textarea.height(contentHeight);
-      }, 'json');
-      event.preventDefault();
-    }
+  $('#prompt').on('input', function () {
+    startTime = new Date();
+    action = "TEXT";
   });
 });
+
 
 // Voice Recorder
 
@@ -36,6 +24,8 @@ let recording = false;
 
 const startRecording = async () => {
   if (!recording) {
+    startTime = new Date();  // Capture the start time when recording starts
+    action = "AUDIO";
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.start();
@@ -76,7 +66,7 @@ const stopRecording = () => {
   });
 };
 
-function clearInputs() {
+const clearInputs = () => {
   document.getElementById('prompt').value = '';
   document.getElementById('promptOutput').value = '';
   document.getElementById('promptOutput').setAttribute("rows", "2");
@@ -88,18 +78,61 @@ function clearInputs() {
 
 window.onload = function () {
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'r' && event.key === 'r') {
-      startRecording();
-      event.preventDefault();
-    } else if (event.key === 's' && event.key === 's') {
-      stopRecording();
-      event.preventDefault();
-    } else if (event.key === 'c' && event.key === 'c') {
-      clearInputs();
-      event.preventDefault();
+    if (!document.getElementById('prompt').matches(':focus')) {
+      if (event.key === 'r') {
+        startRecording();
+        event.preventDefault();
+      } else if (event.key === 's') {
+        stopRecording();
+        event.preventDefault();
+      } else if (event.key === 'c') {
+        clearInputs();
+        event.preventDefault();
+      }
     }
   });
 }
+
+// AI Generated Response
+
+$(document).ready(function () {
+  $(document).keydown(function (event) {
+
+    var input_text = $('#prompt').val();
+    if (event.key === 'Enter' && input_text.length !== 0) {
+      event.preventDefault();
+      $('#prompt').blur();
+
+      $.post('/prompt', { input_text: input_text }, function (data) {
+        $('#promptOutput').val(data.resp);
+        $('#promptOutput2').val(data.alt_resp);
+
+        var textarea = $('#promptOutput');
+        var contentHeight = textarea[0].scrollHeight - parseFloat(textarea.css('padding-top')) - parseFloat(textarea.css('padding-bottom'));
+        textarea.height(contentHeight);
+
+        var textarea = $('#promptOutput2');
+        var contentHeight = textarea[0].scrollHeight - parseFloat(textarea.css('padding-top')) - parseFloat(textarea.css('padding-bottom'));
+        textarea.height(contentHeight);
+
+        // For logging:
+        var hours = startTime.getHours().toString().padStart(2, '0');
+        var minutes = startTime.getMinutes().toString().padStart(2, '0');
+        var seconds = startTime.getSeconds().toString().padStart(2, '0');
+        var time = hours + ':' + minutes + ':' + seconds;
+
+        latency = (new Date() - startTime) / 1000
+
+        $.post('/log', { time: time, latency: latency, action: action, prompt: input_text, resp1: data.resp, resp2: data.alt_resp }, function () {
+          console.log("Data logged successfully!")
+        }, 'json');
+
+      }, 'json');
+
+    }
+  });
+});
+
 
 // Text-to-speech buttons
 
@@ -147,7 +180,7 @@ $(document).ready(function () {
       url: '/generate-sentence',
       type: 'POST',
       success: function (response) {
-        trainerPrompt += response
+        trainerPrompt = response;
         $('#trainerPrompt').val('Say "' + response + '"');
       }
     });
@@ -155,32 +188,39 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-
-  $('#I').click(function () {
-    trainerResponse += "I ";
-  });
-
-  $('#agree').click(function () {
-    trainerResponse += "agree ";
-  });
-
-  $('#disagree').click(function () {
-    trainerResponse += "disagree ";
-  });
-
-  $('#score').click(function () {
-    $.ajax({
-      url: '/score',
-      type: 'POST',
-      data: { prompt: trainerPrompt, resp: trainerResponse },
-      success: function (response) {
-        $('#scoreOut').text("Score: " + response);
-        trainerPrompt = "";
-        trainerResponse = "";
+  
+    $('#I').click(function () {
+      if (trainerPrompt) {
+      trainerResponse += "I ";
       }
     });
-  });
 
+    $('#agree').click(function () {
+      if (trainerPrompt) {
+      trainerResponse += "agree ";
+      }
+    });
+
+    $('#disagree').click(function () {
+      if (trainerPrompt) {
+      trainerResponse += "disagree ";
+      }
+    });
+    
+    $('#score').click(function () {
+      if (trainerResponse) {
+        $.ajax({
+          url: '/score',
+          type: 'POST',
+          data: { prompt: trainerPrompt, resp: trainerResponse },
+          success: function (response) {
+            $('#scoreOut').text("Score: " + response);
+            trainerPrompt = "";
+            trainerResponse = "";
+          }
+        });
+      }
+    });
 });
 
 

@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.debug = True
 app.config["TEMPLATES_AUTO_RELOAD"]  = True
 
-# venv: .\env\Scripts\activate
+# venv: env\Scripts\activate
 # To run: flask --app server run
 # to close venv: deactivate
 
@@ -50,6 +50,15 @@ def transcribe_audio():
 
     return transcription
 
+# Log the QuickTalker details
+@app.route('/log', methods=['POST'])
+def log():
+
+    data = request.form
+    main.update_log(data['time'], data['latency'], data["action"], data['prompt'], data['resp1'], data['resp2'])
+
+    return 'Data logged successfully!', 200
+
 # Send the text-to-speech output
 @app.route('/text-to-speech', methods=['POST'])
 def text_to_speech():
@@ -71,7 +80,7 @@ def score():
 
     prompt, resp = request.form['prompt'], request.form['resp']
 
-    return main.response_score(prompt, resp)
+    return str(main.response_score(prompt, resp)) + "%"
 
 
 if __name__ == '__main__':

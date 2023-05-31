@@ -5,6 +5,10 @@ import os
 import random
 import requests
 # from pydub import AudioSegment
+from datetime import datetime
+import openpyxl
+from openpyxl import Workbook
+from datetime import datetime
 
 openai.api_key = config.OPENAI_API_KEY
 
@@ -43,6 +47,38 @@ def transcribe(audio):
 
   return transcript.text
 
+# To save logs of the QuickTalker
+def update_log(time, latency, action, prompt, resp1, resp2):
+    # Load the existing workbook or create a new one
+    filename = 'logs/quicktalker.xlsx'
+    workbook = openpyxl.load_workbook(filename)
+
+    # Select the active sheet or create a new one
+    sheet = workbook.active
+
+    # Find the next available row to add the entry
+    # row = sheet.max_row + 1
+
+    # Find the next available row by searching for the first empty row below the header
+    row = 2  # Start from row 2 (assuming row 1 is the header)
+    while sheet.cell(row=row, column=1).value is not None:
+        row += 1
+
+    # Update the Date and Time columns with the current date and time
+    now = datetime.now()
+    sheet.cell(row=row, column=1, value=now.date())
+
+    # Update the Time, Time Taken, Prompt, Response #1, Response #2 columns
+    sheet.cell(row=row, column=2, value=time)
+    sheet.cell(row=row, column=3, value=latency + ' s')
+    sheet.cell(row=row, column=4, value=action)
+    sheet.cell(row=row, column=5, value=prompt)
+    sheet.cell(row=row, column=6, value=resp1)
+    sheet.cell(row=row, column=7, value=resp2)
+
+    # Save the workbook
+    workbook.save(filename)
+
 # To generate a sentence for the trainer
 def generate_sentence():
 
@@ -53,15 +89,24 @@ def generate_sentence():
 # To assess the user's response to trainer
 def response_score(r1, r2):
 
-    arr1, arr2 = r1.split(), r2.split()
-    correct = 0
+    prompt, resp   = r1.split(), r2.split()
 
-    for i in range(min(len(arr1),len(arr2))):
-        if arr1[i] == arr2[i]:
-            correct += 1
+    wordScore = 1  # how many tries it took to get the word right
+    # user gets 5 tries, anything beyond that results in a score of 0
+    # each extra try costs 0.20
+
+    scoreSum = 0  # the sum of scores for each word
+
+    i = j = 0
+    while i < len(prompt) and j < len(resp):
+        if prompt[i] == resp[j]:
+            i+=1
+            j+=1
+            scoreSum += max(wordScore, 0)
+            wordScore = 1
+        else:
+            j+=1
+            wordScore -= 0.20
     
-    score = round(correct/len(arr1),4) * 100
-
-    return str(score) + "%"
-
+    return round(scoreSum / len(prompt) * 100, 2)
 
