@@ -138,7 +138,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $(document).keydown(function (event) {
-    if (event.key === '1') {
+    if (event.key === '1' && !$('#num-prompts').is(':focus')) {
       event.preventDefault();
       var inputText = $('#promptOutput').val();
       if (inputText) {
@@ -153,7 +153,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $(document).keydown(function (event) {
-    if (event.key === '2') {
+    if (event.key === '2' && !$('#num-prompts').is(':focus')) {
       var inputText = $('#promptOutput2').val();
       if (inputText) {
         $.post('/text-to-speech', { input_text: inputText }, function (data) {
@@ -171,58 +171,125 @@ $(document).ready(function () {
 TRAINER
 *******
 */
-var trainerPrompt = "";
-var trainerResponse = "";
 
+// To track the prompt number
+var promptNum = 0;
+var maxPrompt = 0;
+
+// File Upload
 $(document).ready(function () {
-  $('#trainerPromptOut').click(function () {
-    $.ajax({
-      url: '/generate-sentence',
-      type: 'POST',
-      success: function (response) {
-        trainerPrompt = response;
-        $('#trainerPrompt').val('Say "' + response + '"');
+  // File input change event
+  $('#file-input').on('change', function () {
+    var filename = $(this).val().split('\\').pop();
+    $('#filename').val(filename);
+  });
+
+  // Filename input keydown event
+  $('#filename').on('keydown', function (event) {
+    if (event.key === 'Backspace') {
+      $('#file-input').val('');
+      $(this).val('');
+    }
+    event.preventDefault();
+  });
+
+  // Upload button click event
+  $('#upload-button').on('click', function (event) {
+    event.preventDefault(); 
+    var file = $('#file-input').prop('files')[0];
+
+    promptNum = 0;
+    maxPrompt = 0;
+
+    if (file) {
+      var numPrompts = parseInt($('#num-prompts').val());
+      if (!numPrompts) {
+        numPrompts = -1;
       }
-    });
+
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('num_lines', numPrompts);
+
+      $.ajax({
+        url: '/upload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          if (response.code == 200) {
+            promptNum = 1;
+            maxPrompt = response.numPrompts;
+          }
+          alert(response.msg);
+        }
+      });
+    }
+
+    else {
+      alert('Please select a file.');
+    }
+    // Reset form values
+    $('#file-input').val('');
+    $('#filename').val('');
+    $('#num-prompts').val('');
+    $('#trainerPrompt').val('');
   });
 });
 
+
+
+// for scoring, not in use right now:
+// var trainerPrompt = "";
+// var trainerResponse = "";
+
+// To generate prompt for trainer
 $(document).ready(function () {
-  
-    $('#I').click(function () {
-      if (trainerPrompt) {
-      trainerResponse += "I ";
+  $('#trainerGenerate').click(function () {
+    if (promptNum != 0) {
+      if (promptNum > maxPrompt) {
+        $('#trainerPrompt').val("Completed!");
       }
-    });
-
-    $('#agree').click(function () {
-      if (trainerPrompt) {
-      trainerResponse += "agree ";
-      }
-    });
-
-    $('#disagree').click(function () {
-      if (trainerPrompt) {
-      trainerResponse += "disagree ";
-      }
-    });
-    
-    $('#score').click(function () {
-      if (trainerResponse) {
+      else {
         $.ajax({
-          url: '/score',
+          url: '/generate-sentence',
           type: 'POST',
-          data: { prompt: trainerPrompt, resp: trainerResponse },
+          data: { line: promptNum },
           success: function (response) {
-            $('#scoreOut').text("Score: " + response);
-            trainerPrompt = "";
-            trainerResponse = "";
+            // trainerPrompt = response;
+            $('#trainerPrompt').val('Say "' + response + '"');
           }
         });
+        promptNum += 1;
       }
-    });
+    }
+  });
 });
 
+
+/*
+// To score user's response
+// Not usable right now since trainer is not connected to OSDPI
+
+$(document).ready(function () {
+
+  $('#score').click(function () {
+    if (trainerResponse) {
+      $.ajax({
+        url: '/score',
+        type: 'POST',
+        data: { prompt: trainerPrompt, resp: trainerResponse },
+        success: function (response) {
+          $('#scoreOut').text("Score: " + response);
+          trainerPrompt = "";
+          trainerResponse = "";
+        }
+      });
+    }
+  });
+});
+*/
 
 /*
 *******

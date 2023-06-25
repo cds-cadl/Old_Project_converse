@@ -80,16 +80,20 @@ def update_log(time, latency, action, prompt, resp1, resp2):
     workbook.save(filename)
 
 # To generate a sentence for the trainer
-def generate_sentence():
+def generate_sentence(lineNum):
 
-    lst = ["agree", "disagree"]
-
-    return "I " + random.choice(lst)
+    with open("trainer_prompts.txt", "r") as file:
+        lines = file.readlines()
+        return lines[lineNum].strip()
 
 # To assess the user's response to trainer
 def response_score(r1, r2):
 
-    prompt, resp   = r1.split(), r2.split()
+    prompt, resp   = r1[:-1].split(), r2.split()
+    if r1[-1] == '.':
+        prompt.append('.')
+    else:
+        prompt.append('?')
 
     wordScore = 1  # how many tries it took to get the word right
     # user gets 5 tries, anything beyond that results in a score of 0
@@ -109,4 +113,3 @@ def response_score(r1, r2):
             wordScore -= 0.20
     
     return round(scoreSum / len(prompt) * 100, 2)
-

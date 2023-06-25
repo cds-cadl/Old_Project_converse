@@ -68,11 +68,43 @@ def text_to_speech():
 
     return jsonify({'audio_content': base64.b64encode(audio_content).decode('utf-8')})
 
+# To handle file uploads for the trainer
+@app.route('/upload', methods=['POST'])
+def upload():
+    resp = ''
+    num_lines = 0
+    code = 404
+    file = request.files['file']
+    if file.filename != '':
+        # Get the user input for the number of lines to be used
+        num_lines = int(request.form['num_lines'])
+
+        # Read the file content
+        file_content = file.read().decode().splitlines()
+
+        if num_lines == -1:
+            num_lines = len(file_content)
+
+        # Check if the number of lines requested is greater than the available lines in the file
+        if num_lines > len(file_content):
+            resp = 'Error: The number of prompts exceeds the available prompts in the file.'
+
+        else:
+            file.stream.seek(0)
+            file.save('trainer_prompts.txt')
+            code = 200
+            resp = 'File uploaded successfully!'
+    else:
+        resp = 'No file selected.'
+
+    return jsonify({'msg':resp, 'numPrompts':num_lines, 'code':code})
+
 # Send the generated sentence for the trainer
 @app.route('/generate-sentence', methods=['POST'])
 def generate_trainer_prompt():
 
-    return main.generate_sentence()
+    lineNum = int(request.form['line'])
+    return main.generate_sentence(lineNum)
 
 # Send the user response's score for the trainer
 @app.route('/score', methods=['POST'])

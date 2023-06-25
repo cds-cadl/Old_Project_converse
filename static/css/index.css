@@ -291,7 +291,6 @@ TRAINER
 *******
 */
 
-
 .trainer {
   margin: 35px auto;
   max-width: 1000px;
@@ -299,6 +298,42 @@ TRAINER
   flex-direction: column;
 }
 
+/* File Upload */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3em;
+}
+
+.file-input-container {
+  display: flex;
+}
+
+#filename {
+  max-width: 20em;
+}
+
+#file-input {
+  display: none;
+}
+
+#num-prompts {
+  max-width: 20em;
+}
+
+#upload-button {
+  max-width: fit-content;
+}
+
+#upload-button:active, #file-upload-button:active {
+  transform: translateY(1px);
+}
+
+#upload-button:hover, #file-upload-button:hover {
+  background-color: #323c4d;
+}
+
+/* Prompt Generator */
 .question {
   display: flex;
   flex-direction: row;
@@ -310,12 +345,7 @@ TRAINER
   font-family: var(--lato);
 }
 
-.options {
-  display: flex;
-  flex-direction: row;
-}
-
-.options button {
+.question #score {
   font-family: var(--lato);
   font-size: 1em;
   margin: 10px;
@@ -324,12 +354,16 @@ TRAINER
   border: none;
   text-align: center;
   cursor: pointer;
-  background-color: #333;
+  background-color: #3a3939;
   color: #fff;
   transition-duration: 0.2s;
 }
 
-.options button:active {
+#score:hover {
+  background-color: #353535;
+}
+
+.question #score:active {
   transform: translateY(1px);
 }
 

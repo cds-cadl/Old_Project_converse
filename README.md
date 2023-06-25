@@ -20,14 +20,14 @@ A training tool for research in the development of conversant augmentative commu
 
 ## QuickTalker usage
 * Type or record prompt to the Chatbot.
-* To record, press the ***'r'*** key twice. To stop recording press the ***'s'*** key twice.
+* To record, press the ***'r'*** key. To stop recording press the ***'s'*** key.
 * To generate AI response, press ***'Enter'*** key.
 * To play the first AI response as audio, press the ***'1'*** key.
 * To play the second AI response as audio, press the ***'2'*** key.
-* To clear the screen, press the ***'c'*** key twice. 
+* To clear the screen, press the ***'c'*** key. 
 
 ## Trainer Usage
 * Click on ***'Generate'*** to receive a user prompt.
 * From the given list of words, enter any combination of words.
 * Press the ***'send'*** icon to get the score.
-* The score is a comparison between the generated prompt and user's response to it. 
+* The score represents how accurate the user's response was to the generated prompt. 

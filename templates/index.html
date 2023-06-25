@@ -61,17 +61,31 @@
         <h1>Trainer</h1>
         <div class="trainer">
 
+            <!-- <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" id="file-input" name="file" accept=".txt">
+                <input type="number" id="num-lines-input" name="num_lines" placeholder="Number of Prompts (Optional)">
+                <button type="submit" id="upload-button">Upload</button>
+            </form>               -->
+            
+            <form class="upload-form">
+                <div class="file-input-container">
+                <input type="text" id="filename" class="bar" placeholder="No file chosen">
+                <label id="file-upload-button" class="submit" >
+                  <input type="file" id="file-input" name="file" accept=".txt">
+                  Select a file
+                </label>
+                </div>
+                <input type="number" class="bar" id="num-prompts" name="num_lines" placeholder="Number of Prompts (Optional)">
+                <button class="submit" id="upload-button">Upload</button>
+            </form>
+              
+
             <div class="generate question">
                 <textarea id="trainerPrompt" class="bar" placeholder="Generate a prompt" rows="1" readonly></textarea>
-                <button class="submit" id="trainerPromptOut"><span>Generate </span></button>
-            </div>
-
-            <div class="trainer options">
-                <button id="I">I</button>
-                <button id="agree">agree</button>
-                <button id="disagree">disagree</button>
+                <button class="submit" id="trainerGenerate"><span>Generate </span></button>
                 <button id="score"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
+
             <p id="scoreOut"></p>
         </div>
     </section>
