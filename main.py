@@ -79,12 +79,56 @@ def update_log(time, latency, action, prompt, resp1, resp2):
     # Save the workbook
     workbook.save(filename)
 
+# To update header for current training session
+def update_header():
+
+    with open("trainer_prompts.txt", "r") as file:
+        header = file.readlines()[0].strip()
+        filename = 'logs/trainer.xlsx'
+        workbook = openpyxl.load_workbook(filename)
+        sheet = workbook.active
+        row = 2  # Start from row 2 (assuming row 1 is the header)
+        while sheet.cell(row=row, column=1).value is not None:
+            row += 1
+        sheet.cell(row=row, column=1, value=header)
+        workbook.save(filename)
+
 # To generate a sentence for the trainer
 def generate_sentence(lineNum):
 
     with open("trainer_prompts.txt", "r") as file:
         lines = file.readlines()
         return lines[lineNum].strip()
+
+# To save logs of the Trainer
+def update_trainer_log(time, latency, prompt):
+    # Load the existing workbook or create a new one
+    filename = 'logs/trainer.xlsx'
+    workbook = openpyxl.load_workbook(filename)
+
+    # Select the active sheet or create a new one
+    sheet = workbook.active
+
+    # Find the next available row to add the entry
+    # row = sheet.max_row + 1
+
+    # Find the next available row by searching for the first empty row below the header
+    row = 3  # Start from row 3 (assuming row 1 is the header)
+    while sheet.cell(row=row, column=1).value is not None:
+        row += 1
+
+    # Update the Date and Time columns with the current date and time
+    now = datetime.now()
+    sheet.cell(row=row, column=1, value=now.date())
+
+    # Update the Time, Latency, Prompt columns
+    sheet.cell(row=row, column=2, value=time)
+    sheet.cell(row=row, column=3, value=latency + ' s')
+    sheet.cell(row=row, column=4, value=prompt)
+
+    # Save the workbook
+    workbook.save(filename)
+
 
 # To assess the user's response to trainer
 def response_score(r1, r2):

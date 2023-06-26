@@ -345,7 +345,7 @@ TRAINER
   font-family: var(--lato);
 }
 
-.question #score {
+.question #logTrainer {
   font-family: var(--lato);
   font-size: 1em;
   margin: 10px;
@@ -359,11 +359,11 @@ TRAINER
   transition-duration: 0.2s;
 }
 
-#score:hover {
+#logTrainer:hover {
   background-color: #353535;
 }
 
-.question #score:active {
+.question #logTrainer:active {
   transform: translateY(1px);
 }
 

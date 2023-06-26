@@ -121,10 +121,10 @@ $(document).ready(function () {
         var seconds = startTime.getSeconds().toString().padStart(2, '0');
         var time = hours + ':' + minutes + ':' + seconds;
 
-        latency = (new Date() - startTime) / 1000
+        const latency = (new Date() - startTime) / 1000;
 
         $.post('/log', { time: time, latency: latency, action: action, prompt: input_text, resp1: data.resp, resp2: data.alt_resp }, function () {
-          console.log("Data logged successfully!")
+          console.log("Data logged successfully!");
         }, 'json');
 
       }, 'json');
@@ -175,6 +175,7 @@ TRAINER
 // To track the prompt number
 var promptNum = 0;
 var maxPrompt = 0;
+var startTrainer;
 
 // File Upload
 $(document).ready(function () {
@@ -241,7 +242,7 @@ $(document).ready(function () {
 
 
 // for scoring, not in use right now:
-// var trainerPrompt = "";
+var trainerPrompt = "";
 // var trainerResponse = "";
 
 // To generate prompt for trainer
@@ -249,7 +250,8 @@ $(document).ready(function () {
   $('#trainerGenerate').click(function () {
     if (promptNum != 0) {
       if (promptNum > maxPrompt) {
-        $('#trainerPrompt').val("Completed!");
+        $('#trainerPrompt').val("Completed! A log has been created!");
+        trainerPrompt='';
       }
       else {
         $.ajax({
@@ -257,12 +259,32 @@ $(document).ready(function () {
           type: 'POST',
           data: { line: promptNum },
           success: function (response) {
-            // trainerPrompt = response;
+            trainerPrompt = response;
             $('#trainerPrompt').val('Say "' + response + '"');
           }
         });
         promptNum += 1;
+        startTrainer = new Date();
       }
+    }
+  });
+});
+
+$(document).ready(function (){
+  $('#logTrainer').click(function () {
+    if (promptNum != 0 && !$('#trainerPrompt').val().includes("Completed!")){
+      var hours = startTrainer.getHours().toString().padStart(2, '0');
+      var minutes = startTrainer.getMinutes().toString().padStart(2, '0');
+      var seconds = startTrainer.getSeconds().toString().padStart(2, '0');
+      var time = hours + ':' + minutes + ':' + seconds;
+
+      var latency = (new Date() - startTrainer) / 1000;
+
+      $.post('/log-trainer', { prompt:trainerPrompt, latency:latency, time:time}, function () {
+        console.log("Data Logged Successfully!");
+        console.log(trainerPrompt);
+        trainerPrompt = "";
+      }, 'json');
     }
   });
 });

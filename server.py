@@ -92,6 +92,7 @@ def upload():
         else:
             file.stream.seek(0)
             file.save('trainer_prompts.txt')
+            main.update_header()
             code = 200
             resp = 'File uploaded successfully!'
     else:
@@ -105,6 +106,16 @@ def generate_trainer_prompt():
 
     lineNum = int(request.form['line'])
     return main.generate_sentence(lineNum)
+
+# Log the Trainer details
+@app.route('/log-trainer', methods=['POST'])
+def logTrainer():
+
+    data = request.form
+    main.update_trainer_log(data['time'], data['latency'], data['prompt'])
+
+    return 'Data logged successfully!', 200
+
 
 # Send the user response's score for the trainer
 @app.route('/score', methods=['POST'])
