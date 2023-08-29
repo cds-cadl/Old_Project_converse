@@ -31,10 +31,15 @@ import re
 import sys
 import time
 
+import configparser
+config = configparser.ConfigParser()
+config.read('/.keys')
+print (config.get('OPENAI','OPENAI_API_KEY'))
+
 # from google.cloud import speech
 import pyaudio
 import openai
-openai.api_key = "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"
+openai.api_key = config.get('OPENAI','OPENAI_API_KEY')
 
 # Audio recording parameters
 STREAMING_LIMIT = 0.1 * 60 * 1000  # 4 minutes
