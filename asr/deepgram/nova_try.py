@@ -5,8 +5,10 @@ from datetime import datetime
 url = "https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true"
 
 # Define the headers for the HTTP request
+api_key = ""
+
 headers = {
-    "Authorization": "Token 06a5361aee7ee3adb59616e681ea88cdf0745f22",
+    "Authorization": f"Token {api_key}",
     "Content-Type": "audio/*"
 }
 
@@ -45,7 +47,7 @@ for i in range(1):
 # # Path to the audio file
 # AUDIO_FILE = "/Users/kartikse/Documents/OS-DPI/OS-DPI/fast-api/deepgram/../audio_files/F_0101_10y4m_1.wav"
 
-# API_KEY = "06a5361aee7ee3adb59616e681ea88cdf0745f22"
+# API_KEY = ""
 
 
 # def main():

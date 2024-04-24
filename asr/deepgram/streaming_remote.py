@@ -12,7 +12,7 @@ from deepgram import (
 # URL for the realtime streaming audio you would like to transcribe
 URL = "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service"
 
-API_KEY = "06a5361aee7ee3adb59616e681ea88cdf0745f22"
+API_KEY = ""
 
 
 def main():
